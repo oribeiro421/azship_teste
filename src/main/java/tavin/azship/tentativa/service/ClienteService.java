@@ -19,9 +19,9 @@ public class ClienteService {
     public List<Client> getAll(){
         return this.clientRepository.findAll();
     }
-    public Optional<Client> getById(Long id) throws IdNotFoundException {
-        return Optional.ofNullable(this.clientRepository
-                .findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado")));
+    public Client getById(Long id) throws IdNotFoundException {
+        return this.clientRepository
+                .findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
     }
     public Client create(ClientDTO data) throws RuntimeException{
         Client client = new Client(data);
@@ -35,5 +35,8 @@ public class ClienteService {
     public void delete(Long id) throws IdNotFoundException {
         this.clientRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
         this.clientRepository.deleteById(id);
+    }
+    public Client findById(Long id){
+        return this.clientRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
     }
 }

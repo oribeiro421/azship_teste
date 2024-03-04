@@ -23,7 +23,7 @@ public class FreightController {
         return new ResponseEntity<>(this.freightService.getAll(), HttpStatus.OK);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Freight>> getById(@PathVariable Long id) throws Exception {
+    public ResponseEntity<Freight> getById(@PathVariable Long id) throws Exception {
         return new ResponseEntity<>(this.freightService.getById(id), HttpStatus.OK);
     }
     @PostMapping

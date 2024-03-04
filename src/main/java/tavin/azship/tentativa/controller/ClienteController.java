@@ -23,7 +23,7 @@ public class ClienteController {
         return new ResponseEntity<>(this.clienteService.getAll(), HttpStatus.OK);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Client>> getById(@PathVariable Long id) throws Exception {
+    public ResponseEntity<Client> getById(@PathVariable Long id) throws Exception {
         return new ResponseEntity<>(this.clienteService.getById(id), HttpStatus.OK);
     }
     @PostMapping

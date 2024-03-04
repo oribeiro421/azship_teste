@@ -31,12 +31,10 @@ public class Freight {
     private Map<String, String> properties;
 
     public Freight (FreightDTO data){
-        this.client = data.client();
         this.properties = data.properties();
     }
     public Freight (Long id, FreightDTO data){
         this.id = id;
-        this.client = data.client();
         this.properties = data.properties();
     }
 }

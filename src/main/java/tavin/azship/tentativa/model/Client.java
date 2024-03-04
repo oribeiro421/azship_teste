@@ -21,9 +21,9 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "client_id")
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String cnpj;
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     @JsonManagedReference
