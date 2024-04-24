@@ -22,7 +22,6 @@ public class Freight {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "freight_id")
     private Long id;
-    private String codigo;
     @ManyToOne
     @JoinColumn(name = "client_id")
     @JsonBackReference
@@ -41,8 +40,4 @@ public class Freight {
         this.properties = data.properties();
     }
 
-    @PrePersist
-    private void gerarCodigo(){
-        setCodigo(UUID.randomUUID().toString());
-    }
 }

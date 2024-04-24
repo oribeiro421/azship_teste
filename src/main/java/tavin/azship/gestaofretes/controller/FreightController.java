@@ -8,9 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tavin.azship.gestaofretes.dto.FreightDTO;
 import tavin.azship.gestaofretes.model.Freight;
+import tavin.azship.gestaofretes.repository.filter.FreightFilter;
 import tavin.azship.gestaofretes.service.FreightService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/freight")
@@ -20,12 +22,21 @@ public class FreightController {
     private FreightService freightService;
 
     @GetMapping
-    public ResponseEntity<Page<Freight>> getAll(Pageable pegeagle){
-        return new ResponseEntity<>(this.freightService.getAll(pegeagle), HttpStatus.OK);
+    public ResponseEntity<Page<Freight>> getAll(@RequestParam(required = false) String propertyValue,
+                                                Pageable pageable) {
+        FreightFilter filter = new FreightFilter();
+        if (propertyValue != null) {
+            filter.getProperties().get(propertyValue);
+        }
+        return new ResponseEntity<>(this.freightService.getAll(filter, pageable), HttpStatus.OK);
     }
-    @GetMapping("/{codigo}")
-    public ResponseEntity<Freight> getByCodigo(@PathVariable String codigo){
-        return new ResponseEntity<>(this.freightService.getByCodigo(codigo), HttpStatus.OK);
+    @GetMapping("/{id}")
+    public ResponseEntity<Freight> getById(@PathVariable Long id){
+        return new ResponseEntity<>(this.freightService.getById(id), HttpStatus.OK);
+    }
+    @GetMapping("/key")
+    public ResponseEntity<Optional<Freight>> getByKeys(@PathVariable String key){
+        return new ResponseEntity<>( this.freightService.findByProperties(key), HttpStatus.OK);
     }
     @PostMapping
     public ResponseEntity<Freight> create(@RequestBody FreightDTO data){

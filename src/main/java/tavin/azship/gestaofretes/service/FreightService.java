@@ -9,11 +9,13 @@ import tavin.azship.gestaofretes.handler.exception.ClientNotFoundException;
 import tavin.azship.gestaofretes.handler.exception.CodigoNotFoundException;
 import tavin.azship.gestaofretes.handler.exception.IdNotFoundException;
 import tavin.azship.gestaofretes.handler.exception.PropertiesNotFoundException;
+import tavin.azship.gestaofretes.infra.FreightSpecs;
 import tavin.azship.gestaofretes.model.Client;
 import tavin.azship.gestaofretes.model.Freight;
 import tavin.azship.gestaofretes.repository.FreightRepository;
+import tavin.azship.gestaofretes.repository.filter.FreightFilter;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FreightService {
@@ -25,12 +27,12 @@ public class FreightService {
     private ClientService clientService;
 
 
-    public Page<Freight> getAll(Pageable pageable){
-        return this.freightRepository.findAll(pageable);
+    public Page<Freight> getAll(FreightFilter filter,Pageable pageable){
+        return this.freightRepository.findAll(FreightSpecs.usandoFiltro(filter),pageable);
     }
-    public Freight getByCodigo(String codigo) throws IdNotFoundException {
-        return this.freightRepository.findByCodigo(codigo)
-                .orElseThrow(() -> new CodigoNotFoundException("Codigo não encontrado"));
+    public Freight getById(Long id) throws IdNotFoundException {
+        return this.freightRepository.findById(id)
+                .orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
     }
     public Freight create (FreightDTO freightDTO) throws RuntimeException {
         Client client = this.clientService.findById(freightDTO.clientId());
@@ -48,5 +50,9 @@ public class FreightService {
     public void delete(Long id) throws IdNotFoundException {
         this.freightRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
         this.freightRepository.deleteById(id);
+    }
+
+    public Optional<Freight> findByProperties(String key){
+        return freightRepository.findByProperties(key);
     }
 }
