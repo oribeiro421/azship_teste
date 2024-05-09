@@ -52,7 +52,4 @@ public class FreightService {
         this.freightRepository.deleteById(id);
     }
 
-    public Optional<Freight> findByProperties(String key){
-        return freightRepository.findByProperties(key);
-    }
 }

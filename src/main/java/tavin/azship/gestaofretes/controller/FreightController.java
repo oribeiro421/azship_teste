@@ -34,10 +34,6 @@ public class FreightController {
     public ResponseEntity<Freight> getById(@PathVariable Long id){
         return new ResponseEntity<>(this.freightService.getById(id), HttpStatus.OK);
     }
-    @GetMapping("/key")
-    public ResponseEntity<Optional<Freight>> getByKeys(@PathVariable String key){
-        return new ResponseEntity<>( this.freightService.findByProperties(key), HttpStatus.OK);
-    }
     @PostMapping
     public ResponseEntity<Freight> create(@RequestBody FreightDTO data){
         Freight freight = this.freightService.create(data);

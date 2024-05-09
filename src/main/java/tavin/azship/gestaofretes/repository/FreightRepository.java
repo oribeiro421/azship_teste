@@ -13,11 +13,6 @@ import java.util.Optional;
 @Repository
 public interface FreightRepository extends JpaRepository<Freight, Long>, JpaSpecificationExecutor<Freight> {
 
-    @Query("SELECT f " +
-            "FROM Freight f " +
-            "JOIN f.properties p " +
-            "WHERE KEY(p)= :property_key")
-    Optional<Freight> findByProperties(@Param("property_key") String key);
 
 
 }
