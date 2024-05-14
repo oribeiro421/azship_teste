@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tavin.azship.gestaofretes.dto.FreightDTO;
 import tavin.azship.gestaofretes.handler.exception.ClientNotFoundException;
-import tavin.azship.gestaofretes.handler.exception.CodigoNotFoundException;
 import tavin.azship.gestaofretes.handler.exception.IdNotFoundException;
 import tavin.azship.gestaofretes.handler.exception.PropertiesNotFoundException;
 import tavin.azship.gestaofretes.infra.FreightSpecs;
@@ -15,7 +14,6 @@ import tavin.azship.gestaofretes.model.Freight;
 import tavin.azship.gestaofretes.repository.FreightRepository;
 import tavin.azship.gestaofretes.repository.filter.FreightFilter;
 
-import java.util.Optional;
 
 @Service
 public class FreightService {
@@ -43,9 +41,12 @@ public class FreightService {
         return this.freightRepository.save(freight);
     }
     public Freight update (Long id, FreightDTO freightDTO) throws IdNotFoundException {
-        Freight freight = new Freight(id, freightDTO);
+        Freight freight = this.freightRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
+        Client client = this.clientService.findById(freight.getClient().getId());
+        Freight freight1 = new Freight(id, freightDTO);
         if (freight.getId() == null || !freight.getId().equals(id)) throw new IdNotFoundException("Id não encontrado");
-        return this.freightRepository.save(freight);
+        freight1.setClient(client);
+        return this.freightRepository.save(freight1);
     }
     public void delete(Long id) throws IdNotFoundException {
         this.freightRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));

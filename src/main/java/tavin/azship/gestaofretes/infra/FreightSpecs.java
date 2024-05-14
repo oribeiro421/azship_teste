@@ -16,6 +16,7 @@ public class FreightSpecs {
 
             if(filter.getProperties() != null){
                 for (Map.Entry<String, String> entry : filter.getProperties().entrySet()){
+                    predicates.add(builder.equal(root.joinMap("properties").key(), entry.getKey()));
                     predicates.add(builder.equal(root.joinMap("properties").value(), entry.getValue()));
                 }
             }
