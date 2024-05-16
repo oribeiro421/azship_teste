@@ -6,10 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import tavin.azship.gestaofretes.dto.ExceptionDTO;
-import tavin.azship.gestaofretes.handler.exception.ClientNotFoundException;
-import tavin.azship.gestaofretes.handler.exception.CodigoNotFoundException;
-import tavin.azship.gestaofretes.handler.exception.IdNotFoundException;
-import tavin.azship.gestaofretes.handler.exception.PropertiesNotFoundException;
+import tavin.azship.gestaofretes.handler.exception.*;
 
 @RestControllerAdvice
 public class ExceptionNotFoundHandler {
@@ -36,6 +33,16 @@ public class ExceptionNotFoundHandler {
     }
     @ExceptionHandler(CodigoNotFoundException.class)
     public ResponseEntity<?> codigoNotFound(CodigoNotFoundException exception){
+        ExceptionDTO ex = new ExceptionDTO(exception.getMessage(), HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(ex, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(AddressCollectNotFoundException.class)
+    public ResponseEntity<?> addressCollectNotFound(AddressCollectNotFoundException exception) {
+        ExceptionDTO ex = new ExceptionDTO(exception.getMessage(), HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(ex, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(AddressDeliveryNotFoundException.class)
+    public ResponseEntity<?> addressDeliveryNotFound(AddressDeliveryNotFoundException exception) {
         ExceptionDTO ex = new ExceptionDTO(exception.getMessage(), HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(ex, HttpStatus.NOT_FOUND);
     }

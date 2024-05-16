@@ -23,7 +23,7 @@ public class ClientController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<Client> getById(@PathVariable Long id){
-        return new ResponseEntity<>(this.clientService.getById(id), HttpStatus.OK);
+        return new ResponseEntity<>(this.clientService.seekOrFail(id), HttpStatus.OK);
     }
     @PostMapping
     public ResponseEntity<Client> create(@RequestBody ClientDTO data) throws Exception {
@@ -38,6 +38,26 @@ public class ClientController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
         this.clientService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @PutMapping("/active/{id}")
+    public ResponseEntity<Void> active(@PathVariable Long id){
+        clientService.active(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @DeleteMapping("/disable/{id}")
+    public ResponseEntity<Void> disable(@PathVariable Long id){
+        clientService.disable(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @PutMapping("/activations")
+    public ResponseEntity<Void> activations(@RequestBody List<Long> ids){
+        clientService.active(ids);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @DeleteMapping("/disabless")
+    public ResponseEntity<Void> disableMultiples(@RequestBody List<Long> ids){
+        clientService.disable(ids);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

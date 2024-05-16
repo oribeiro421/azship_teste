@@ -26,6 +26,7 @@ public class Client {
     private String cnpj;
     @Column(nullable = false)
     private String email;
+    private Boolean active = Boolean.TRUE;
 
     public Client(ClientDTO data){
         this.freights = data.freights();
@@ -39,4 +40,10 @@ public class Client {
         this.email = data.email();
     }
 
+    public void active(){
+        setActive(true);
+    }
+    public void disable(){
+        setActive(false);
+    }
 }

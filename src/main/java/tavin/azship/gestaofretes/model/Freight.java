@@ -26,6 +26,12 @@ public class Freight {
     @JoinColumn(name = "client_id")
     @JsonBackReference
     private Client client;
+    @OneToOne
+    @JoinColumn(name = "address_collect_id")
+    private AddressCollect addressCollect;
+    @OneToOne
+    @JoinColumn(name = "address_delivery_id")
+    private AddressDelivery addressDelivery;
     @ElementCollection
     @CollectionTable(name = "freight_properties", joinColumns = @JoinColumn(name = "freight_id"))
     @MapKeyColumn(name = "property_key")

@@ -1,15 +1,15 @@
 package tavin.azship.gestaofretes.service;
 
-import org.springframework.beans.BeanUtils;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tavin.azship.gestaofretes.dto.ClientDTO;
 import tavin.azship.gestaofretes.handler.exception.IdNotFoundException;
 import tavin.azship.gestaofretes.model.Client;
 import tavin.azship.gestaofretes.repository.ClientRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ClientService {
@@ -20,26 +20,48 @@ public class ClientService {
     public List<Client> getAll(){
         return this.clientRepository.findAll();
     }
-    public Client getById (Long id) throws IdNotFoundException{
+    public Client seekOrFail(Long id) throws IdNotFoundException{
         return this.clientRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
     }
-    public Client create (ClientDTO clientDTO) throws Exception {
+    @Transactional
+    public Client create (@Valid ClientDTO clientDTO) throws Exception {
         if (clientDTO.email().isEmpty()) throw new Exception("Client sem email");
         if (clientDTO.cnpj().isEmpty()) throw new Exception("Client sem cnpj");
         Client client = new Client(clientDTO);
         return this.clientRepository.save(client);
     }
-    public Client update(Long id, ClientDTO clientDTO) throws IdNotFoundException {
+    @Transactional
+    public Client update(Long id,@Valid ClientDTO clientDTO) throws IdNotFoundException {
         Client client = new Client(id, clientDTO);
         if (client.getId() == null || !client.getId().equals(id)) throw new IdNotFoundException("Id não encontrado");
         return this.clientRepository.save(client);
     }
+    @Transactional
     public void delete(Long id) throws IdNotFoundException {
-        this.clientRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
+        seekOrFail(id);
         this.clientRepository.deleteById(id);
     }
-    public Client findById(Long id) throws IdNotFoundException {
-        return this.clientRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
+    @Transactional
+    public void active(Long id){
+        Client client = seekOrFail(id);
+
+        client.active();
+    }
+    @Transactional
+    public void disable(Long id){
+        Client client = seekOrFail(id);
+
+        client.disable();
+    }
+
+    @Transactional
+    public void active(List<Long> ids){
+        ids.forEach(this::active);
+    }
+
+    @Transactional
+    public void disable(List<Long> ids){
+        ids.forEach(this::disable);
     }
 
 }

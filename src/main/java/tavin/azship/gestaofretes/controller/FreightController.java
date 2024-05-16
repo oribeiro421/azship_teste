@@ -11,9 +11,6 @@ import tavin.azship.gestaofretes.model.Freight;
 import tavin.azship.gestaofretes.repository.filter.FreightFilter;
 import tavin.azship.gestaofretes.service.FreightService;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/freight")
 public class FreightController {
@@ -32,7 +29,7 @@ public class FreightController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<Freight> getById(@PathVariable Long id){
-        return new ResponseEntity<>(this.freightService.getById(id), HttpStatus.OK);
+        return new ResponseEntity<>(this.freightService.seekOrFail(id), HttpStatus.OK);
     }
     @PostMapping
     public ResponseEntity<Freight> create(@RequestBody FreightDTO data){
