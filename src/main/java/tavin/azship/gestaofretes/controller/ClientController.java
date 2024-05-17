@@ -18,7 +18,10 @@ public class ClientController {
     private ClientService clientService;
 
     @GetMapping
-    public ResponseEntity<List<Client>> getAll(){
+    public ResponseEntity<List<Client>> getAll(@RequestParam(required = false) Boolean excludeActive){
+        if (excludeActive != null && !excludeActive){
+            return new ResponseEntity<>(this.clientService.getInactive(), HttpStatus.OK);
+        }
         return new ResponseEntity<>(this.clientService.getAll(), HttpStatus.OK);
     }
     @GetMapping("/{id}")

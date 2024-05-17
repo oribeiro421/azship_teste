@@ -15,6 +15,8 @@ import tavin.azship.gestaofretes.model.Freight;
 import tavin.azship.gestaofretes.repository.FreightRepository;
 import tavin.azship.gestaofretes.repository.filter.FreightFilter;
 
+import java.util.List;
+
 
 @Service
 public class FreightService {
@@ -41,33 +43,38 @@ public class FreightService {
     }
     public Freight create (@Valid FreightDTO freightDTO) throws RuntimeException {
         Client client = this.clientService.seekOrFail(freightDTO.clientId());
-        AddressDelivery delivery = this.deliveryService.seekOrFail(freightDTO.addressDeliveryId());
-        AddressCollect collect = this.collectService.seekOrFail(freightDTO.addressCollectId());
+        List<AddressDelivery> deliveries = this.deliveryService.seekOrFails(freightDTO.addressDeliveryId());
+        List<AddressCollect> collects = this.collectService.seekOrFails(freightDTO.addressCollectId());
         Freight freight = new Freight(freightDTO);
-        freight.setClient(client);
-        freight.setAddressCollect(collect);
-        freight.setAddressDelivery(delivery);
-        if (freight.getClient() == null) throw new ClientNotFoundException("Cliente não encontrado");
-        if (freight.getAddressCollect() == null) throw new AddressCollectNotFoundException("Endereço não encontrado");
-        if (freight.getAddressDelivery() == null) throw new AddressDeliveryNotFoundException("Endereço não encontrado");
         if (freightDTO.properties().isEmpty()) throw new PropertiesNotFoundException("Propriedades não informadas");
+        freight.setClient(client);
+        freight.setAddressDelivery(deliveries);
+        freight.setAddressCollect(collects);
         return this.freightRepository.save(freight);
     }
     public Freight update (Long id,@Valid FreightDTO freightDTO) throws IdNotFoundException {
         Freight freight = seekOrFail(id);
-        Client client = this.clientService.seekOrFail(freight.getClient().getId());
-        AddressDelivery delivery = this.deliveryService.seekOrFail(freightDTO.addressDeliveryId());
-        AddressCollect collect = this.collectService.seekOrFail(freightDTO.addressCollectId());
-        Freight freight1 = new Freight(id, freightDTO);
-        if (freight.getId() == null || !freight.getId().equals(id)) throw new IdNotFoundException("Id não encontrado");
-        freight1.setClient(client);
-        freight1.setAddressDelivery(delivery);
-        freight1.setAddressCollect(collect);
-        return this.freightRepository.save(freight1);
+        if (freightDTO.clientId() != null){
+            Client client = this.clientService.seekOrFail(freightDTO.clientId());
+            freight.setClient(client);
+        }
+        if(freightDTO.addressCollectId() != null && !freightDTO.addressCollectId().isEmpty()){
+            List<AddressCollect> collects = this.collectService.seekOrFails(freightDTO.addressCollectId());
+            freight.setAddressCollect(collects);
+        }
+        if(freightDTO.addressDeliveryId() != null && !freightDTO.addressDeliveryId().isEmpty()){
+            List<AddressDelivery> deliveries = this.deliveryService.seekOrFails(freightDTO.addressDeliveryId());
+            freight.setAddressDelivery(deliveries);
+        }
+        if (freightDTO.properties() != null && !freightDTO.properties().isEmpty()){
+            freight.setProperties(freightDTO.properties());
+        }
+        return this.freightRepository.save(freight);
     }
     public void delete(Long id) throws IdNotFoundException {
         seekOrFail(id);
         this.freightRepository.deleteById(id);
     }
+
 
 }

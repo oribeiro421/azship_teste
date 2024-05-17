@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 import tavin.azship.gestaofretes.dto.ClientDTO;
 import tavin.azship.gestaofretes.handler.exception.IdNotFoundException;
 import tavin.azship.gestaofretes.model.Client;
@@ -19,6 +20,9 @@ public class ClientService {
 
     public List<Client> getAll(){
         return this.clientRepository.findAll();
+    }
+    public List<Client> getInactive(){
+        return this.clientRepository.findByInactive();
     }
     public Client seekOrFail(Long id) throws IdNotFoundException{
         return this.clientRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));

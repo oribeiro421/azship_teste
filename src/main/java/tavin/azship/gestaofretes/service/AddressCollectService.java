@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tavin.azship.gestaofretes.dto.AddressCollectDTO;
 import tavin.azship.gestaofretes.handler.exception.IdNotFoundException;
 import tavin.azship.gestaofretes.model.AddressCollect;
+import tavin.azship.gestaofretes.model.AddressDelivery;
 import tavin.azship.gestaofretes.repository.AddressCollectRepository;
 
 import java.util.List;
@@ -21,6 +22,13 @@ public class AddressCollectService {
     }
     public AddressCollect seekOrFail(Long id){
         return collectRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
+    }
+    public List<AddressCollect> seekOrFails(List<Long> id){
+        List<AddressCollect> collects = collectRepository.findByIdIn(id);
+        if (collects.isEmpty() || collects.size() != id.size()){
+            throw new IdNotFoundException("Id não encontrado");
+        }
+        return collects;
     }
     @Transactional
     public AddressCollect create(AddressCollectDTO dto){

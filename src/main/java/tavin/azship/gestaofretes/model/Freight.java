@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import tavin.azship.gestaofretes.dto.FreightDTO;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,12 +27,16 @@ public class Freight {
     @JoinColumn(name = "client_id")
     @JsonBackReference
     private Client client;
-    @OneToOne
-    @JoinColumn(name = "address_collect_id")
-    private AddressCollect addressCollect;
-    @OneToOne
-    @JoinColumn(name = "address_delivery_id")
-    private AddressDelivery addressDelivery;
+    @ManyToMany
+    @JoinTable(name = "freight_collect",
+            joinColumns = @JoinColumn(name = "freight_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_collect_id"))
+    private List<AddressCollect> addressCollect;
+    @ManyToMany
+    @JoinTable(name = "freight_delivery",
+            joinColumns = @JoinColumn(name = "freight_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_delivery_id"))
+    private List<AddressDelivery> addressDelivery;
     @ElementCollection
     @CollectionTable(name = "freight_properties", joinColumns = @JoinColumn(name = "freight_id"))
     @MapKeyColumn(name = "property_key")

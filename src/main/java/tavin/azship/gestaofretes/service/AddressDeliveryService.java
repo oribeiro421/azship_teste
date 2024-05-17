@@ -21,6 +21,13 @@ public class AddressDeliveryService {
     public AddressDelivery seekOrFail(Long id){
         return deliveryRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
     }
+    public List<AddressDelivery> seekOrFails(List<Long> id){
+        List<AddressDelivery> deliveries = deliveryRepository.findByIdIn(id);
+        if (deliveries.isEmpty() || deliveries.size() != id.size()){
+            throw new IdNotFoundException("Id não encontrado");
+        }
+        return deliveries;
+    }
     public AddressDelivery create(AddressDeliveryDTO dto){
         AddressDelivery delivery = new AddressDelivery(dto);
         return deliveryRepository.save(delivery);

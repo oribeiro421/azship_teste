@@ -1,5 +1,7 @@
 package tavin.azship.gestaofretes.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import tavin.azship.gestaofretes.dto.AddressCollectDTO;
 import tavin.azship.gestaofretes.dto.AddressDeliveryDTO;
+
+import java.util.List;
 
 @Entity
 @Getter
