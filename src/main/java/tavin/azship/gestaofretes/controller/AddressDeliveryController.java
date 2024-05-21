@@ -18,7 +18,10 @@ public class AddressDeliveryController {
     private AddressDeliveryService deliveryService;
 
     @GetMapping
-    public ResponseEntity<List<AddressDelivery>> getAll(){
+    public ResponseEntity<List<AddressDelivery>> getAll(@RequestParam(required = false) Boolean excludeActive){
+        if (excludeActive != null && !excludeActive){
+            return new ResponseEntity<>(deliveryService.getInactive(), HttpStatus.OK);
+        }
         return new ResponseEntity<>(deliveryService.getAll(), HttpStatus.OK);
     }
     @GetMapping("/{id}")

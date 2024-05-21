@@ -1,5 +1,6 @@
 package tavin.azship.gestaofretes.service;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,6 +42,7 @@ public class FreightService {
         return this.freightRepository.findById(id)
                 .orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
     }
+    @Transactional
     public Freight create (@Valid FreightDTO freightDTO) throws RuntimeException {
         Client client = this.clientService.seekOrFail(freightDTO.clientId());
         List<AddressDelivery> deliveries = this.deliveryService.seekOrFails(freightDTO.addressDeliveryId());
@@ -52,6 +54,7 @@ public class FreightService {
         freight.setAddressCollect(collects);
         return this.freightRepository.save(freight);
     }
+    @Transactional
     public Freight update (Long id,@Valid FreightDTO freightDTO) throws IdNotFoundException {
         Freight freight = seekOrFail(id);
         if (freightDTO.clientId() != null){
@@ -71,9 +74,38 @@ public class FreightService {
         }
         return this.freightRepository.save(freight);
     }
+    @Transactional
     public void delete(Long id) throws IdNotFoundException {
         seekOrFail(id);
         this.freightRepository.deleteById(id);
+    }
+    @Transactional
+    public void associationCollect(Long freightId, Long collectId){
+        Freight freight = seekOrFail(freightId);
+        AddressCollect addressCollect = collectService.seekOrFail(collectId);
+
+        freight.associationCollect(addressCollect);
+    }
+    @Transactional
+    public void disassociateCollect(Long freightId, Long collectId){
+        Freight freight = seekOrFail(freightId);
+        AddressCollect addressCollect = collectService.seekOrFail(collectId);
+
+        freight.disassociateCollect(addressCollect);
+    }
+    @Transactional
+    public void associationDelivery(Long freightId, Long deliveryId){
+        Freight freight = seekOrFail(freightId);
+        AddressDelivery addressDelivery = deliveryService.seekOrFail(deliveryId);
+
+        freight.associationDelivery(addressDelivery);
+    }
+    @Transactional
+    public void disassociateDelivery(Long freightId, Long deliveryId){
+        Freight freight = seekOrFail(freightId);
+        AddressDelivery addressDelivery = deliveryService.seekOrFail(deliveryId);
+
+        freight.disassociateDelivery(addressDelivery);
     }
 
 

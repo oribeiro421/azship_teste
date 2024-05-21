@@ -18,7 +18,10 @@ public class AddressCollectController {
     private AddressCollectService collectService;
 
     @GetMapping
-    public ResponseEntity<List<AddressCollect>> getAll(){
+    public ResponseEntity<List<AddressCollect>> getAll(@RequestParam(required = false) Boolean excludeActive){
+        if (excludeActive != null && !excludeActive){
+            return new ResponseEntity<>(collectService.getInactive(), HttpStatus.OK);
+        }
         return new ResponseEntity<>(collectService.getAll(), HttpStatus.OK);
     }
     @GetMapping("/{id}")

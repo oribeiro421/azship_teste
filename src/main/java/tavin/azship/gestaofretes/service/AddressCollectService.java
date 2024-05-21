@@ -20,6 +20,9 @@ public class AddressCollectService {
     public List<AddressCollect> getAll(){
         return collectRepository.findAll();
     }
+    public List<AddressCollect> getInactive(){
+        return collectRepository.findByInactive();
+    }
     public AddressCollect seekOrFail(Long id){
         return collectRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
     }
