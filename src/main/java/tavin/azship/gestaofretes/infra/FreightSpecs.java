@@ -2,8 +2,8 @@ package tavin.azship.gestaofretes.infra;
 
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
-import tavin.azship.gestaofretes.model.Freight;
-import tavin.azship.gestaofretes.repository.filter.FreightFilter;
+import tavin.azship.gestaofretes.domain.model.Freight;
+import tavin.azship.gestaofretes.domain.repository.filter.FreightFilter;
 
 import java.util.ArrayList;
 import java.util.Map;
