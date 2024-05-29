@@ -7,9 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tavin.azship.gestaofretes.api.dto.FreightDTO;
-import tavin.azship.gestaofretes.domain.exception.IdNotFoundException;
-import tavin.azship.gestaofretes.domain.exception.PropertiesNotFoundException;
-import tavin.azship.gestaofretes.handler.exception.*;
+import tavin.azship.gestaofretes.domain.exception.ResourceNotFoundException;
 import tavin.azship.gestaofretes.infra.FreightSpecs;
 import tavin.azship.gestaofretes.domain.model.AddressCollect;
 import tavin.azship.gestaofretes.domain.model.AddressDelivery;
@@ -40,24 +38,29 @@ public class FreightService {
     public Page<Freight> getAll(FreightFilter filter,Pageable pageable){
         return this.freightRepository.findAll(FreightSpecs.usandoFiltro(filter),pageable);
     }
-    public Freight seekOrFail(Long id) throws IdNotFoundException {
+
+    public Freight seekOrFail(Long id) {
         return this.freightRepository.findById(id)
-                .orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException(ResourceNotFoundException.Type.ID,"Id não encontrado"));
     }
+
     @Transactional
-    public Freight create (@Valid FreightDTO freightDTO) throws RuntimeException {
+    public Freight create (@Valid FreightDTO freightDTO) {
         Client client = this.clientService.seekOrFail(freightDTO.clientId());
         List<AddressDelivery> deliveries = this.deliveryService.seekOrFails(freightDTO.addressDeliveryId());
         List<AddressCollect> collects = this.collectService.seekOrFails(freightDTO.addressCollectId());
         Freight freight = new Freight(freightDTO);
-        if (freightDTO.properties().isEmpty()) throw new PropertiesNotFoundException("Propriedades não informadas");
+        if (freightDTO.properties().isEmpty()) {
+            throw new ResourceNotFoundException(ResourceNotFoundException.Type.PROPERTY, "Propriedades não informadas");
+        }
         freight.setClient(client);
         freight.setAddressDelivery(deliveries);
         freight.setAddressCollect(collects);
         return this.freightRepository.save(freight);
     }
+
     @Transactional
-    public Freight update (Long id,@Valid FreightDTO freightDTO) throws IdNotFoundException {
+    public Freight update (Long id,@Valid FreightDTO freightDTO) {
         Freight freight = seekOrFail(id);
         if (freightDTO.clientId() != null){
             Client client = this.clientService.seekOrFail(freightDTO.clientId());
@@ -76,11 +79,13 @@ public class FreightService {
         }
         return this.freightRepository.save(freight);
     }
+
     @Transactional
-    public void delete(Long id) throws IdNotFoundException {
+    public void delete(Long id) {
         seekOrFail(id);
         this.freightRepository.deleteById(id);
     }
+
     @Transactional
     public void associationCollect(Long freightId, Long collectId){
         Freight freight = seekOrFail(freightId);
@@ -88,6 +93,7 @@ public class FreightService {
 
         freight.associationCollect(addressCollect);
     }
+
     @Transactional
     public void disassociateCollect(Long freightId, Long collectId){
         Freight freight = seekOrFail(freightId);
@@ -95,6 +101,7 @@ public class FreightService {
 
         freight.disassociateCollect(addressCollect);
     }
+
     @Transactional
     public void associationDelivery(Long freightId, Long deliveryId){
         Freight freight = seekOrFail(freightId);
@@ -102,6 +109,7 @@ public class FreightService {
 
         freight.associationDelivery(addressDelivery);
     }
+
     @Transactional
     public void disassociateDelivery(Long freightId, Long deliveryId){
         Freight freight = seekOrFail(freightId);

@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tavin.azship.gestaofretes.api.dto.ClientDTO;
-import tavin.azship.gestaofretes.domain.exception.IdNotFoundException;
+import tavin.azship.gestaofretes.domain.exception.ResourceEmptyException;
+import tavin.azship.gestaofretes.domain.exception.ResourceNotFoundException;
 import tavin.azship.gestaofretes.domain.model.Client;
 import tavin.azship.gestaofretes.domain.repository.ClientRepository;
 
@@ -20,36 +21,50 @@ public class ClientService {
     public List<Client> getAll(){
         return this.clientRepository.findAll();
     }
+
     public List<Client> getInactive(){
         return this.clientRepository.findByInactive();
     }
-    public Client seekOrFail(Long id) throws IdNotFoundException{
-        return this.clientRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
+
+    public Client seekOrFail(Long id) {
+        return this.clientRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException(ResourceNotFoundException.Type.ID, "Id não encontrado"));
     }
+
     @Transactional
-    public Client create (@Valid ClientDTO clientDTO) throws Exception {
-        if (clientDTO.email().isEmpty()) throw new Exception("Client sem email");
-        if (clientDTO.cnpj().isEmpty()) throw new Exception("Client sem cnpj");
+    public Client create (@Valid ClientDTO clientDTO)  {
+        if (clientDTO.email().isEmpty()) {
+            throw new ResourceEmptyException (ResourceEmptyException.Type.EMAIL, "Client sem email");
+        }
+        if (clientDTO.cnpj().isEmpty()){
+            throw new ResourceEmptyException (ResourceEmptyException.Type.CNPJ, "Client sem cnpj");
+        }
         Client client = new Client(clientDTO);
         return this.clientRepository.save(client);
     }
+
     @Transactional
-    public Client update(Long id,@Valid ClientDTO clientDTO) throws IdNotFoundException {
+    public Client update(Long id,@Valid ClientDTO clientDTO)  {
         Client client = new Client(id, clientDTO);
-        if (client.getId() == null || !client.getId().equals(id)) throw new IdNotFoundException("Id não encontrado");
+        if (client.getId() == null || !client.getId().equals(id)){
+            throw new ResourceNotFoundException(ResourceNotFoundException.Type.ID, "Id não encontrado");
+        }
         return this.clientRepository.save(client);
     }
+
     @Transactional
-    public void delete(Long id) throws IdNotFoundException {
+    public void delete(Long id)  {
         seekOrFail(id);
         this.clientRepository.deleteById(id);
     }
+
     @Transactional
     public void active(Long id){
         Client client = seekOrFail(id);
 
         client.active();
     }
+
     @Transactional
     public void disable(Long id){
         Client client = seekOrFail(id);

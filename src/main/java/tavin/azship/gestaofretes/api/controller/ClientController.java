@@ -29,7 +29,7 @@ public class ClientController {
         return new ResponseEntity<>(this.clientService.seekOrFail(id), HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<Client> create(@RequestBody ClientDTO data) throws Exception {
+    public ResponseEntity<Client> create(@RequestBody ClientDTO data) {
         Client client = this.clientService.create(data);
         return new ResponseEntity<>(client,HttpStatus.CREATED);
     }

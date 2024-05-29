@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tavin.azship.gestaofretes.api.dto.AddressCollectDTO;
-import tavin.azship.gestaofretes.domain.exception.IdNotFoundException;
+import tavin.azship.gestaofretes.domain.exception.ResourceNotFoundException;
 import tavin.azship.gestaofretes.domain.model.AddressCollect;
 import tavin.azship.gestaofretes.domain.repository.AddressCollectRepository;
 
@@ -19,16 +19,19 @@ public class AddressCollectService {
     public List<AddressCollect> getAll(){
         return collectRepository.findAll();
     }
+
     public List<AddressCollect> getInactive(){
         return collectRepository.findByInactive();
     }
+
     public AddressCollect seekOrFail(Long id){
-        return collectRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
+        return collectRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException (ResourceNotFoundException.Type.ID, "Id não encontrado"));
     }
     public List<AddressCollect> seekOrFails(List<Long> id){
         List<AddressCollect> collects = collectRepository.findByIdIn(id);
         if (collects.isEmpty() || collects.size() != id.size()){
-            throw new IdNotFoundException("Id não encontrado");
+            throw new ResourceNotFoundException (ResourceNotFoundException.Type.ID, "Id não encontrado");
         }
         return collects;
     }
