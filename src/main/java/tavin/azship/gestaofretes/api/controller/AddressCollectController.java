@@ -10,6 +10,7 @@ import tavin.azship.gestaofretes.domain.service.AddressCollectService;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/address_collect")
 public class AddressCollectController {

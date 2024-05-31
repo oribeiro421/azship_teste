@@ -10,6 +10,7 @@ import tavin.azship.gestaofretes.domain.service.AddressDeliveryService;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/address_delivery")
 public class AddressDeliveryController {

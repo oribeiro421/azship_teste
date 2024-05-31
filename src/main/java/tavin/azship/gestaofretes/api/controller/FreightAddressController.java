@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import tavin.azship.gestaofretes.domain.service.FreightService;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/freight/{freightId}/address")
 public class FreightAddressController {

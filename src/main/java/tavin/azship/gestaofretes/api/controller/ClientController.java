@@ -10,6 +10,7 @@ import tavin.azship.gestaofretes.domain.service.ClientService;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/client")
 public class ClientController {

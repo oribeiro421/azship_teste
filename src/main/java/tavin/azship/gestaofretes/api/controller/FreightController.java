@@ -11,6 +11,7 @@ import tavin.azship.gestaofretes.domain.model.Freight;
 import tavin.azship.gestaofretes.domain.repository.filter.FreightFilter;
 import tavin.azship.gestaofretes.domain.service.FreightService;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/freight")
 public class FreightController {
