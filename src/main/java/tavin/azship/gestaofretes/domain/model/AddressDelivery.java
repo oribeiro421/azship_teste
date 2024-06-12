@@ -47,4 +47,8 @@ public class AddressDelivery {
     public void disable(){
         setActive(false);
     }
+
+    public boolean isActive(){
+        return active;
+    }
 }

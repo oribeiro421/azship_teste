@@ -55,34 +55,43 @@ public class Freight {
     public Freight (FreightDTO data){
         this.properties = data.properties();
     }
+
     public Freight (Long id, FreightDTO data){
         this.id = id;
         this.properties = data.properties();
     }
+
     public boolean associationCollect(AddressCollect addressCollect){
         return getAddressCollect().add(addressCollect);
     }
+
     public boolean disassociateCollect(AddressCollect addressCollect){
         return getAddressCollect().remove(addressCollect);
     }
+
     public boolean associationDelivery(AddressDelivery addressDelivery){
         return getAddressDelivery().add(addressDelivery);
     }
+
     public boolean disassociateDelivery(AddressDelivery addressDelivery){
         return getAddressDelivery().remove(addressDelivery);
     }
+
     public void confirmed(){
         setStatus(StatusFreight.CONFIRMED);
         setConfirmed(OffsetDateTime.now());
     }
+
     public void inTransit(){
         setStatus(StatusFreight.IN_TRANSIT);
         setInTransit(OffsetDateTime.now());
     }
+
     public void delivered(){
         setStatus(StatusFreight.DELIVERED);
         setDelivered(OffsetDateTime.now());
     }
+
     public void canceled(){
         setStatus(StatusFreight.CANCELED);
         setDelivered(OffsetDateTime.now());

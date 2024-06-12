@@ -46,16 +46,23 @@ public class FreightService {
 
     @Transactional
     public Freight create (@Valid FreightDTO freightDTO) {
+
         Client client = this.clientService.seekOrFail(freightDTO.clientId());
         List<AddressDelivery> deliveries = this.deliveryService.seekOrFails(freightDTO.addressDeliveryId());
         List<AddressCollect> collects = this.collectService.seekOrFails(freightDTO.addressCollectId());
+
+        validatedFreight(collects, deliveries);
+
         Freight freight = new Freight(freightDTO);
+
         if (freightDTO.properties().isEmpty()) {
             throw new ResourceNotFoundException(ResourceNotFoundException.Type.PROPERTY, "Propriedades não informadas");
         }
+
         freight.setClient(client);
         freight.setAddressDelivery(deliveries);
         freight.setAddressCollect(collects);
+
         return this.freightRepository.save(freight);
     }
 
@@ -86,36 +93,18 @@ public class FreightService {
         this.freightRepository.deleteById(id);
     }
 
-    @Transactional
-    public void associationCollect(Long freightId, Long collectId){
-        Freight freight = seekOrFail(freightId);
-        AddressCollect addressCollect = collectService.seekOrFail(collectId);
 
-        freight.associationCollect(addressCollect);
-    }
-
-    @Transactional
-    public void disassociateCollect(Long freightId, Long collectId){
-        Freight freight = seekOrFail(freightId);
-        AddressCollect addressCollect = collectService.seekOrFail(collectId);
-
-        freight.disassociateCollect(addressCollect);
-    }
-
-    @Transactional
-    public void associationDelivery(Long freightId, Long deliveryId){
-        Freight freight = seekOrFail(freightId);
-        AddressDelivery addressDelivery = deliveryService.seekOrFail(deliveryId);
-
-        freight.associationDelivery(addressDelivery);
-    }
-
-    @Transactional
-    public void disassociateDelivery(Long freightId, Long deliveryId){
-        Freight freight = seekOrFail(freightId);
-        AddressDelivery addressDelivery = deliveryService.seekOrFail(deliveryId);
-
-        freight.disassociateDelivery(addressDelivery);
+    private void validatedFreight(List<AddressCollect> collects, List<AddressDelivery> deliveries){
+        for (AddressCollect collect : collects){
+            if (!collect.isActive()){
+                throw new ResourceNotFoundException(ResourceNotFoundException.Type.COLLECT, "Local de coleta inativo");
+            }
+        }
+        for (AddressDelivery delivery : deliveries){
+            if (!delivery.isActive()){
+                throw new ResourceNotFoundException(ResourceNotFoundException.Type.DELIVERY, "Local de entrega inativo");
+            }
+        }
     }
 
 
