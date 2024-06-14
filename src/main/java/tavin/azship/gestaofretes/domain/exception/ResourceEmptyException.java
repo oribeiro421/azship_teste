@@ -8,7 +8,7 @@ import lombok.Data;
 public class ResourceEmptyException extends RuntimeException{
 
     public enum Type{
-        EMAIL, CNPJ;
+        EMAIL, CNPJ, NAME, CPF, LICENSE_NUMBER, BIRTH_DATE;
     }
 
     private Type type;

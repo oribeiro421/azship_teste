@@ -1,4 +1,12 @@
 package tavin.azship.gestaofretes.api.dto;
 
-public record ExceptionDTO(String message, Integer statusCode) {
+import lombok.Builder;
+
+@Builder
+public record ExceptionDTO(
+
+        String message,
+
+        Integer statusCode
+) {
 }

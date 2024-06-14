@@ -24,28 +24,38 @@ public class Freight {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "freight_id")
     private Long id;
+
     @ManyToOne
     @JoinColumn(name = "client_id")
     @JsonBackReference
     private Client client;
+
     @ManyToMany
     @JoinTable(name = "freight_collect",
             joinColumns = @JoinColumn(name = "freight_id"),
             inverseJoinColumns = @JoinColumn(name = "address_collect_id"))
     private List<AddressCollect> addressCollect;
+
     @ManyToMany
     @JoinTable(name = "freight_delivery",
             joinColumns = @JoinColumn(name = "freight_id"),
             inverseJoinColumns = @JoinColumn(name = "address_delivery_id"))
     private List<AddressDelivery> addressDelivery;
+
     @CreationTimestamp
     private OffsetDateTime creationDate;
     private OffsetDateTime confirmed;
     private OffsetDateTime inTransit;
     private OffsetDateTime delivered;
     private OffsetDateTime canceled;
+
+    @ManyToOne
+    @JoinColumn(name = "driver_id")
+    private Driver driver;
+
     @Enumerated(EnumType.STRING)
     private StatusFreight status = StatusFreight.CREATED;
+
     @ElementCollection
     @CollectionTable(name = "freight_properties", joinColumns = @JoinColumn(name = "freight_id"))
     @MapKeyColumn(name = "property_key")

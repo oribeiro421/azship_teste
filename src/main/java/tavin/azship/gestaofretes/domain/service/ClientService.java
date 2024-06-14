@@ -33,22 +33,15 @@ public class ClientService {
 
     @Transactional
     public Client create (@Valid ClientDTO clientDTO)  {
-        if (clientDTO.email().isEmpty()) {
-            throw new ResourceEmptyException (ResourceEmptyException.Type.EMAIL, "Client sem email");
-        }
-        if (clientDTO.cnpj().isEmpty()){
-            throw new ResourceEmptyException (ResourceEmptyException.Type.CNPJ, "Client sem cnpj");
-        }
+        validate(clientDTO);
         Client client = new Client(clientDTO);
         return this.clientRepository.save(client);
     }
 
     @Transactional
     public Client update(Long id,@Valid ClientDTO clientDTO)  {
+        seekOrFail(id);
         Client client = new Client(id, clientDTO);
-        if (client.getId() == null || !client.getId().equals(id)){
-            throw new ResourceNotFoundException(ResourceNotFoundException.Type.ID, "Id não encontrado");
-        }
         return this.clientRepository.save(client);
     }
 
@@ -80,6 +73,15 @@ public class ClientService {
     @Transactional
     public void disable(List<Long> ids){
         ids.forEach(this::disable);
+    }
+
+    public void validate(ClientDTO dto){
+        if (dto.email().isEmpty()) {
+            throw new ResourceEmptyException (ResourceEmptyException.Type.EMAIL, "Client sem email");
+        }
+        if (dto.cnpj().isEmpty()){
+            throw new ResourceEmptyException (ResourceEmptyException.Type.CNPJ, "Client sem cnpj");
+        }
     }
 
 }

@@ -8,11 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tavin.azship.gestaofretes.api.dto.FreightDTO;
 import tavin.azship.gestaofretes.domain.exception.ResourceNotFoundException;
+import tavin.azship.gestaofretes.domain.model.*;
 import tavin.azship.gestaofretes.infra.FreightSpecs;
-import tavin.azship.gestaofretes.domain.model.AddressCollect;
-import tavin.azship.gestaofretes.domain.model.AddressDelivery;
-import tavin.azship.gestaofretes.domain.model.Client;
-import tavin.azship.gestaofretes.domain.model.Freight;
 import tavin.azship.gestaofretes.domain.repository.FreightRepository;
 import tavin.azship.gestaofretes.domain.repository.filter.FreightFilter;
 
@@ -34,6 +31,9 @@ public class FreightService {
     @Autowired
     private AddressDeliveryService deliveryService;
 
+    @Autowired
+    private DriverService driverService;
+
 
     public Page<Freight> getAll(FreightFilter filter,Pageable pageable){
         return this.freightRepository.findAll(FreightSpecs.usandoFiltro(filter),pageable);
@@ -50,6 +50,7 @@ public class FreightService {
         Client client = this.clientService.seekOrFail(freightDTO.clientId());
         List<AddressDelivery> deliveries = this.deliveryService.seekOrFails(freightDTO.addressDeliveryId());
         List<AddressCollect> collects = this.collectService.seekOrFails(freightDTO.addressCollectId());
+        Driver driver = this.driverService.seekOrFail(freightDTO.driverId());
 
         validatedFreight(collects, deliveries);
 
@@ -62,6 +63,7 @@ public class FreightService {
         freight.setClient(client);
         freight.setAddressDelivery(deliveries);
         freight.setAddressCollect(collects);
+        freight.setDriver(driver);
 
         return this.freightRepository.save(freight);
     }
@@ -72,6 +74,10 @@ public class FreightService {
         if (freightDTO.clientId() != null){
             Client client = this.clientService.seekOrFail(freightDTO.clientId());
             freight.setClient(client);
+        }
+        if (freightDTO.driverId() != null){
+            Driver driver = this.driverService.seekOrFail(freightDTO.driverId());
+            freight.setDriver(driver);
         }
         if(freightDTO.addressCollectId() != null && !freightDTO.addressCollectId().isEmpty()){
             List<AddressCollect> collects = this.collectService.seekOrFails(freightDTO.addressCollectId());

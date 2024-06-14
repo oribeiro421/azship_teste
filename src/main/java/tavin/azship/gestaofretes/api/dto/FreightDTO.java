@@ -6,12 +6,20 @@ import java.util.List;
 import java.util.Map;
 
 public record FreightDTO (
-        @NotBlank
+
+        @NotBlank(message = "Cliente não pode ser nulo")
         Long clientId,
-        @NotBlank
+
+        @NotBlank(message = "Motorista não pode ser nulo")
+        Long driverId,
+
+        @NotBlank(message = "Local de coleta não pode ser nulo")
         List<Long> addressCollectId,
-        @NotBlank
+
+        @NotBlank(message = "Local de entrega não pode ser nulo")
         List<Long> addressDeliveryId,
-        @NotBlank
-        Map<String, String>properties){
+
+        @NotBlank(message = "Propriedades não pode ser nulo")
+        Map<String, String>properties
+){
 }

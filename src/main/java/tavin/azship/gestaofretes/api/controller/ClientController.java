@@ -1,5 +1,6 @@
 package tavin.azship.gestaofretes.api.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,12 +31,12 @@ public class ClientController {
         return new ResponseEntity<>(this.clientService.seekOrFail(id), HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<Client> create(@RequestBody ClientDTO data) {
+    public ResponseEntity<Client> create(@RequestBody @Valid ClientDTO data) {
         Client client = this.clientService.create(data);
         return new ResponseEntity<>(client,HttpStatus.CREATED);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Client> update(@PathVariable Long id,@RequestBody ClientDTO data) {
+    public ResponseEntity<Client> update(@PathVariable Long id,@RequestBody @Valid ClientDTO data) {
         Client client = this.clientService.update(id, data);
         return new ResponseEntity<>(client,HttpStatus.OK);
     }
