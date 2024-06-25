@@ -14,6 +14,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import tavin.azship.gestaofretes.api.dto.ExceptionDTO;
 import tavin.azship.gestaofretes.domain.exception.*;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestControllerAdvice
 public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 
@@ -35,12 +39,12 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 
         if (body == null) {
             body = ExceptionDTO.builder()
-                    .message(ex.getMessage())
+                    .message(Collections.singletonList(ex.getMessage()))
                     .statusCode(statusCode.value())
                     .build();
         } else if (body instanceof String) {
             body = ExceptionDTO.builder()
-                    .message((String) body)
+                    .message(Collections.singletonList((String) body))
                     .statusCode(statusCode.value())
                     .build();
         }
@@ -53,7 +57,8 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                      HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
-        String errorMessage = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+        List<String> errorMessage = ex.getBindingResult().getAllErrors().stream()
+                .map(error -> error.getDefaultMessage()).collect(Collectors.toList());
 
         ExceptionDTO exceptionDTO = ExceptionDTO.builder()
                 .message(errorMessage)

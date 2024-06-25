@@ -1,5 +1,6 @@
 package tavin.azship.gestaofretes.api.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,12 +34,12 @@ public class FreightController {
         return new ResponseEntity<>(this.freightService.seekOrFail(id), HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<Freight> create(@RequestBody FreightDTO data){
+    public ResponseEntity<Freight> create(@Valid @RequestBody FreightDTO data){
         Freight freight = this.freightService.create(data);
         return new ResponseEntity<>(freight, HttpStatus.CREATED);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Freight> update(@PathVariable Long id, @RequestBody FreightDTO data){
+    public ResponseEntity<Freight> update(@PathVariable Long id,@Valid @RequestBody FreightDTO data){
         Freight freight = this.freightService.update(id, data);
         return new ResponseEntity<>(freight, HttpStatus.OK);
     }

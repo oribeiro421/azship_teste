@@ -8,7 +8,7 @@ import lombok.Data;
 public class ResourceNotFoundException extends RuntimeException{
 
     public enum Type{
-        PROPERTY, ID, CLIENT, DELIVERY, COLLECT;
+        PROPERTY, ID, CLIENT, DELIVERY, COLLECT, FLOW_FREIGHT;
     }
 
     private Type type;

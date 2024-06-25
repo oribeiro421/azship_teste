@@ -13,22 +13,22 @@ public class FreightAddressController {
     @Autowired
     private FreightAddressService freightAddress;
 
-    @PutMapping("/{collectId}")
+    @PutMapping("/collect/{collectId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void associationCollect(@PathVariable Long freightId, @PathVariable Long collectId){
         freightAddress.associationCollect(freightId, collectId);
     }
-    @DeleteMapping("/{collectId}")
+    @DeleteMapping("/collect/{collectId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void disassociateCollect(@PathVariable Long freightId, @PathVariable Long collectId){
         freightAddress.disassociateCollect(freightId, collectId);
     }
-    @PutMapping("/{deliveryId}")
+    @PutMapping("/delivery/{deliveryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void associationDelivery(@PathVariable Long freightId, @PathVariable Long deliveryId){
         freightAddress.associationDelivery(freightId, deliveryId);
     }
-    @DeleteMapping("/{deliveryId}")
+    @DeleteMapping("/delivery/{deliveryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void disassociateDelivery(@PathVariable Long freightId, @PathVariable Long deliveryId){
         freightAddress.disassociateDelivery(freightId, deliveryId);

@@ -1,5 +1,6 @@
 package tavin.azship.gestaofretes.api.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,11 +31,11 @@ public class AddressDeliveryController {
         return new ResponseEntity<>(deliveryService.seekOrFail(id), HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<AddressDelivery> create(@RequestBody AddressDeliveryDTO dto){
+    public ResponseEntity<AddressDelivery> create(@Valid @RequestBody AddressDeliveryDTO dto){
         return new ResponseEntity<>(deliveryService.create(dto), HttpStatus.CREATED);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<AddressDelivery> update(@PathVariable Long id, @RequestBody AddressDeliveryDTO dto){
+    public ResponseEntity<AddressDelivery> update(@PathVariable Long id,@Valid @RequestBody AddressDeliveryDTO dto){
         return new ResponseEntity<>(deliveryService.update(id, dto), HttpStatus.OK);
     }
     @DeleteMapping("/{id}")

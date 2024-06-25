@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import tavin.azship.gestaofretes.api.dto.FreightDTO;
+import tavin.azship.gestaofretes.domain.exception.ResourceNotFoundException;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -109,7 +110,8 @@ public class Freight {
 
     private void setStatus(StatusFreight newStatus){
         if (getStatus().cannotChange(newStatus)){
-            throw new RuntimeException(String.format("Status do frete %s não pode ser alterado de %s para %s",
+            throw new ResourceNotFoundException(ResourceNotFoundException.Type.FLOW_FREIGHT,
+                    String.format("Status do frete %s não pode ser alterado de %s para %s",
                     getId(), getStatus().getDescription(), newStatus.getDescription()));
         }
         this.status = newStatus;
