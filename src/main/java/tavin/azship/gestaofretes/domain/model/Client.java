@@ -43,7 +43,13 @@ public class Client {
     public void active(){
         setActive(true);
     }
+
     public void disable(){
         setActive(false);
     }
+
+    public boolean isActive(){
+        return active;
+    }
+
 }

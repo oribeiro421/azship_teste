@@ -46,24 +46,10 @@ public class FreightService {
 
     @Transactional
     public Freight create (@Valid FreightDTO freightDTO) {
-
-        Client client = this.clientService.seekOrFail(freightDTO.clientId());
-        List<AddressDelivery> deliveries = this.deliveryService.seekOrFails(freightDTO.addressDeliveryId());
-        List<AddressCollect> collects = this.collectService.seekOrFails(freightDTO.addressCollectId());
-        Driver driver = this.driverService.seekOrFail(freightDTO.driverId());
-
-        validatedFreight(collects, deliveries);
-
         Freight freight = new Freight(freightDTO);
 
-        if (freightDTO.properties().isEmpty()) {
-            throw new ResourceNotFoundException(ResourceNotFoundException.Type.PROPERTY, "Propriedades não informadas");
-        }
-
-        freight.setClient(client);
-        freight.setAddressDelivery(deliveries);
-        freight.setAddressCollect(collects);
-        freight.setDriver(driver);
+        setFreightAssociations(freightDTO, freight);
+        validateProperties(freightDTO);
 
         return this.freightRepository.save(freight);
     }
@@ -71,8 +57,36 @@ public class FreightService {
     @Transactional
     public Freight update (Long id,@Valid FreightDTO freightDTO) {
         Freight freight = seekOrFail(id);
+        updateFreight(freight, freightDTO);
+        return this.freightRepository.save(freight);
+    }
+
+
+    @Transactional
+    public void delete(Long id) {
+        seekOrFail(id);
+        this.freightRepository.deleteById(id);
+    }
+
+    private void setFreightAssociations(FreightDTO freightDTO, Freight freight){
+        Client client = this.clientService.seekOrFail(freightDTO.clientId());
+        List<AddressDelivery> deliveries = this.deliveryService.seekOrFails(freightDTO.addressDeliveryId());
+        List<AddressCollect> collects = this.collectService.seekOrFails(freightDTO.addressCollectId());
+        Driver driver = this.driverService.seekOrFail(freightDTO.driverId());
+
+        freight.setClient(client);
+        freight.setAddressDelivery(deliveries);
+        freight.setAddressCollect(collects);
+        freight.setDriver(driver);
+
+        validatedFreight(collects, deliveries);
+        validatedClient(client);
+    }
+
+    private void updateFreight(Freight freight, FreightDTO freightDTO) {
         if (freightDTO.clientId() != null){
             Client client = this.clientService.seekOrFail(freightDTO.clientId());
+            validatedClient(client);
             freight.setClient(client);
         }
         if (freightDTO.driverId() != null){
@@ -81,24 +95,25 @@ public class FreightService {
         }
         if(freightDTO.addressCollectId() != null && !freightDTO.addressCollectId().isEmpty()){
             List<AddressCollect> collects = this.collectService.seekOrFails(freightDTO.addressCollectId());
+            validatedCollects(collects);
             freight.setAddressCollect(collects);
         }
         if(freightDTO.addressDeliveryId() != null && !freightDTO.addressDeliveryId().isEmpty()){
             List<AddressDelivery> deliveries = this.deliveryService.seekOrFails(freightDTO.addressDeliveryId());
+            validatedDelivires(deliveries);
             freight.setAddressDelivery(deliveries);
         }
         if (freightDTO.properties() != null && !freightDTO.properties().isEmpty()){
+            validateProperties(freightDTO);
             freight.setProperties(freightDTO.properties());
         }
-        return this.freightRepository.save(freight);
     }
 
-    @Transactional
-    public void delete(Long id) {
-        seekOrFail(id);
-        this.freightRepository.deleteById(id);
+    private void validateProperties(FreightDTO freightDTO) {
+        if (freightDTO.properties().isEmpty()) {
+            throw new ResourceNotFoundException(ResourceNotFoundException.Type.PROPERTY, "Propriedades não informadas");
+        }
     }
-
 
     private void validatedFreight(List<AddressCollect> collects, List<AddressDelivery> deliveries){
         for (AddressCollect collect : collects){
@@ -110,6 +125,28 @@ public class FreightService {
             if (!delivery.isActive()){
                 throw new ResourceNotFoundException(ResourceNotFoundException.Type.DELIVERY, "Local de entrega inativo");
             }
+        }
+    }
+
+    private void validatedCollects(List<AddressCollect> collects){
+        for (AddressCollect collect : collects){
+            if (!collect.isActive()){
+                throw new ResourceNotFoundException(ResourceNotFoundException.Type.COLLECT, "Local de coleta inativo");
+            }
+        }
+    }
+
+    private void validatedDelivires(List<AddressDelivery> deliveries){
+        for (AddressDelivery delivery : deliveries){
+            if (!delivery.isActive()){
+                throw new ResourceNotFoundException(ResourceNotFoundException.Type.DELIVERY, "Local de entrega inativo");
+            }
+        }
+    }
+
+    private void validatedClient(Client client){
+        if (!client.isActive()){
+            throw new ResourceNotFoundException(ResourceNotFoundException.Type.CLIENT, "Cliente inativo");
         }
     }
 

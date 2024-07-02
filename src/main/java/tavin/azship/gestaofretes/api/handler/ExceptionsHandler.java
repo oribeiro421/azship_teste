@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,6 +24,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> resourceNotFoundHandler(ResourceNotFoundException exception, WebRequest request){
+
         return handleExceptionInternal(exception, exception.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
@@ -36,6 +38,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
                                      HttpStatusCode statusCode, WebRequest request) {
+
 
         if (body == null) {
             body = ExceptionDTO.builder()
@@ -57,14 +60,19 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                      HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
-        List<String> errorMessage = ex.getBindingResult().getAllErrors().stream()
-                .map(error -> error.getDefaultMessage()).collect(Collectors.toList());
+        List<String> errorMessages = ex.getBindingResult().getAllErrors().stream()
+                .map(error -> {
+                    String fieldName = ((FieldError) error).getField();
+                    String errorMessage = error.getDefaultMessage();
+                    return fieldName + ": " + errorMessage;
+                })
+                .collect(Collectors.toList());
 
         ExceptionDTO exceptionDTO = ExceptionDTO.builder()
-                .message(errorMessage)
+                .message(errorMessages)
                 .statusCode(status.value())
                 .build();
 
-        return new ResponseEntity<>(exceptionDTO, headers, status);
+        return super.handleExceptionInternal(ex, exceptionDTO, headers, status, request);
     }
 }
