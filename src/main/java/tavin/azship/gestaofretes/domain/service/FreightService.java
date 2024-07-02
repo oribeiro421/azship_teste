@@ -36,7 +36,7 @@ public class FreightService {
 
 
     public Page<Freight> getAll(FreightFilter filter,Pageable pageable){
-        return this.freightRepository.findAll(FreightSpecs.usandoFiltro(filter),pageable);
+        return this.freightRepository.findAll(FreightSpecs.usingFilter(filter),pageable);
     }
 
     public Freight seekOrFail(Long id) {
@@ -79,14 +79,14 @@ public class FreightService {
         freight.setAddressCollect(collects);
         freight.setDriver(driver);
 
-        validatedFreight(collects, deliveries);
-        validatedClient(client);
+        validateFreight(collects, deliveries);
+        validateClient(client);
     }
 
     private void updateFreight(Freight freight, FreightDTO freightDTO) {
         if (freightDTO.clientId() != null){
             Client client = this.clientService.seekOrFail(freightDTO.clientId());
-            validatedClient(client);
+            validateClient(client);
             freight.setClient(client);
         }
         if (freightDTO.driverId() != null){
@@ -95,12 +95,12 @@ public class FreightService {
         }
         if(freightDTO.addressCollectId() != null && !freightDTO.addressCollectId().isEmpty()){
             List<AddressCollect> collects = this.collectService.seekOrFails(freightDTO.addressCollectId());
-            validatedCollects(collects);
+            validateCollects(collects);
             freight.setAddressCollect(collects);
         }
         if(freightDTO.addressDeliveryId() != null && !freightDTO.addressDeliveryId().isEmpty()){
             List<AddressDelivery> deliveries = this.deliveryService.seekOrFails(freightDTO.addressDeliveryId());
-            validatedDelivires(deliveries);
+            validateDeliveries(deliveries);
             freight.setAddressDelivery(deliveries);
         }
         if (freightDTO.properties() != null && !freightDTO.properties().isEmpty()){
@@ -115,7 +115,7 @@ public class FreightService {
         }
     }
 
-    private void validatedFreight(List<AddressCollect> collects, List<AddressDelivery> deliveries){
+    private void validateFreight(List<AddressCollect> collects, List<AddressDelivery> deliveries){
         for (AddressCollect collect : collects){
             if (!collect.isActive()){
                 throw new ResourceNotFoundException(ResourceNotFoundException.Type.COLLECT, "Local de coleta inativo");
@@ -128,7 +128,7 @@ public class FreightService {
         }
     }
 
-    private void validatedCollects(List<AddressCollect> collects){
+    private void validateCollects(List<AddressCollect> collects){
         for (AddressCollect collect : collects){
             if (!collect.isActive()){
                 throw new ResourceNotFoundException(ResourceNotFoundException.Type.COLLECT, "Local de coleta inativo");
@@ -136,7 +136,7 @@ public class FreightService {
         }
     }
 
-    private void validatedDelivires(List<AddressDelivery> deliveries){
+    private void validateDeliveries(List<AddressDelivery> deliveries){
         for (AddressDelivery delivery : deliveries){
             if (!delivery.isActive()){
                 throw new ResourceNotFoundException(ResourceNotFoundException.Type.DELIVERY, "Local de entrega inativo");
@@ -144,7 +144,7 @@ public class FreightService {
         }
     }
 
-    private void validatedClient(Client client){
+    private void validateClient(Client client){
         if (!client.isActive()){
             throw new ResourceNotFoundException(ResourceNotFoundException.Type.CLIENT, "Cliente inativo");
         }

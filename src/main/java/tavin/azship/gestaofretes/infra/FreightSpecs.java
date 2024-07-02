@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class FreightSpecs {
 
-    public static Specification<Freight> usandoFiltro(FreightFilter filter){
+    public static Specification<Freight> usingFilter(FreightFilter filter){
         return (root, query, builder) -> {
             var predicates = new ArrayList<Predicate>();
 
