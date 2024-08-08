@@ -1,10 +1,10 @@
 package tavin.azship.gestaofretes.domain.service;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tavin.azship.gestaofretes.api.dto.DriverDTO;
-import tavin.azship.gestaofretes.domain.exception.ResourceEmptyException;
+import tavin.azship.gestaofretes.api.dto.update.DriverUpdateDTO;
 import tavin.azship.gestaofretes.domain.exception.ResourceNotFoundException;
 import tavin.azship.gestaofretes.domain.model.Driver;
 import tavin.azship.gestaofretes.domain.repository.DriverRepository;
@@ -12,10 +12,10 @@ import tavin.azship.gestaofretes.domain.repository.DriverRepository;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DriverService {
 
-    @Autowired
-    private DriverRepository driverRepository;
+    private final DriverRepository driverRepository;
 
     public List<Driver> getAll(){
         return driverRepository.findAll();
@@ -27,14 +27,18 @@ public class DriverService {
     }
 
     public Driver create(@Valid DriverDTO dto){
-        validate(dto);
-        Driver driver = new Driver(dto);
+        Driver driver = new Driver();
+
+        DriverDTO.toEntity(driver, dto);
+
         return driverRepository.save(driver);
     }
 
-    public Driver update(Long id, @Valid DriverDTO dto){
-        seekOrFail(id);
-        Driver driver = new Driver(id, dto);
+    public Driver update(Long id, @Valid DriverUpdateDTO dto){
+        Driver driver = seekOrFail(id);
+
+        DriverUpdateDTO.toEntityUpdate(driver, dto);
+
         return driverRepository.save(driver);
     }
 
@@ -43,18 +47,4 @@ public class DriverService {
         driverRepository.deleteById(id);
     }
 
-    private void validate(DriverDTO dto){
-        if (dto.name().isEmpty()){
-            throw new ResourceEmptyException(ResourceEmptyException.Type.NAME, "Nome esta vazio");
-        }
-        if (dto.cpf().isEmpty()){
-            throw new ResourceEmptyException(ResourceEmptyException.Type.CPF, "Cpf esta vazio");
-        }
-        if (dto.licenseNumber().isEmpty()){
-            throw new ResourceEmptyException(ResourceEmptyException.Type.LICENSE_NUMBER, "Numero da cnh esta vazia");
-        }
-        if (dto.birthDate().isEmpty()){
-            throw new ResourceEmptyException(ResourceEmptyException.Type.BIRTH_DATE, "Data de nascimento esta vazia");
-        }
-    }
 }

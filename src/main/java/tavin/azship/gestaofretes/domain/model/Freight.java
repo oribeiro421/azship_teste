@@ -63,14 +63,6 @@ public class Freight {
     @Column(name = "property_value")
     private Map<String, String> properties;
 
-    public Freight (FreightDTO data){
-        this.properties = data.properties();
-    }
-
-    public Freight (Long id, FreightDTO data){
-        this.id = id;
-        this.properties = data.properties();
-    }
 
     public boolean associationCollect(AddressCollect addressCollect){
         return getAddressCollect().add(addressCollect);

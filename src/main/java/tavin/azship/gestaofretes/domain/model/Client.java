@@ -28,17 +28,6 @@ public class Client {
     private String email;
     private Boolean active = Boolean.TRUE;
 
-    public Client(ClientDTO data){
-        this.freights = data.freights();
-        this.cnpj = data.cnpj();
-        this.email = data.email();
-    }
-    public Client(Long id, ClientDTO data){
-        this.id = id;
-        this.freights = data.freights();
-        this.cnpj = data.cnpj();
-        this.email = data.email();
-    }
 
     public void active(){
         setActive(true);

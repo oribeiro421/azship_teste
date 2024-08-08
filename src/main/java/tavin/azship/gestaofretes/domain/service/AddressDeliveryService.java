@@ -1,9 +1,12 @@
 package tavin.azship.gestaofretes.domain.service;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tavin.azship.gestaofretes.api.dto.AddressDeliveryDTO;
+import tavin.azship.gestaofretes.api.dto.update.AddressDeliveryUpdateDTO;
 import tavin.azship.gestaofretes.domain.exception.ResourceNotFoundException;
 import tavin.azship.gestaofretes.domain.model.AddressDelivery;
 import tavin.azship.gestaofretes.domain.repository.AddressDeliveryRepository;
@@ -11,10 +14,10 @@ import tavin.azship.gestaofretes.domain.repository.AddressDeliveryRepository;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AddressDeliveryService {
 
-    @Autowired
-    private AddressDeliveryRepository deliveryRepository;
+    private final AddressDeliveryRepository deliveryRepository;
 
     public List<AddressDelivery> getAll(){
         return deliveryRepository.findAll();
@@ -29,42 +32,35 @@ public class AddressDeliveryService {
                 -> new ResourceNotFoundException (ResourceNotFoundException.Type.ID, "Id não encontrado"));
     }
 
-    public List<AddressDelivery> seekOrFails(List<Long> id){
-        List<AddressDelivery> deliveries = deliveryRepository.findByIdIn(id);
-        if (deliveries.isEmpty() || deliveries.size() != id.size()){
-            throw new ResourceNotFoundException (ResourceNotFoundException.Type.ID, "Id não encontrado");
-        }
+    public List<AddressDelivery> seekOrFails(List<Long> ids){
+        List<AddressDelivery> deliveries = deliveryRepository.findByIdIn(ids);
+
+        ids.forEach(id -> {
+            if (deliveries.stream().noneMatch(delivery -> delivery.getId().equals(id))){
+                throw new ResourceNotFoundException(ResourceNotFoundException.Type.ID, "Id não encontrado: " + id);
+            }
+        });
+
         return deliveries;
     }
 
     @Transactional
-    public AddressDelivery create(AddressDeliveryDTO dto){
-        AddressDelivery delivery = new AddressDelivery(dto);
+    public AddressDelivery create(@Valid AddressDeliveryDTO dto){
+        AddressDelivery delivery = new AddressDelivery();
+
+        AddressDeliveryDTO.toEntity(delivery, dto);
+
         return deliveryRepository.save(delivery);
     }
 
     @Transactional
-    public AddressDelivery update(Long id, AddressDeliveryDTO dto){
-        seekOrFail(id);
-        AddressDelivery delivery = new AddressDelivery(id, dto);
+    public AddressDelivery update(Long id,@Valid AddressDeliveryUpdateDTO dto){
+        AddressDelivery delivery = seekOrFail(id);
+
+        AddressDeliveryUpdateDTO.toEntityUpdate(delivery, dto);
+
         return deliveryRepository.save(delivery);
     }
 
-    @Transactional
-    public void delete(Long id){
-        seekOrFail(id);
-        deliveryRepository.deleteById(id);
-    }
 
-    @Transactional
-    public void active(Long id){
-        AddressDelivery delivery = seekOrFail(id);
-        delivery.active();
-    }
-
-    @Transactional
-    public void disable(Long id){
-        AddressDelivery delivery = seekOrFail(id);
-        delivery.disable();
-    }
 }

@@ -33,19 +33,5 @@ public class Driver {
     @JsonBackReference
     private List<Freight> freights;
 
-    public Driver (DriverDTO dto){
-        this.name = dto.name();
-        this.cpf = dto.cpf();
-        this.licenseNumber = dto.licenseNumber();
-        this.birthDate = dto.birthDate();
-    }
-
-    public Driver (Long id, DriverDTO dto){
-        this.id = id;
-        this.name = dto.name();
-        this.cpf = dto.cpf();
-        this.licenseNumber = dto.licenseNumber();
-        this.birthDate = dto.birthDate();
-    }
 
 }

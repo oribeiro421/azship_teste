@@ -1,10 +1,12 @@
 package tavin.azship.gestaofretes.domain.service;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tavin.azship.gestaofretes.api.dto.ClientDTO;
+import tavin.azship.gestaofretes.api.dto.update.ClientUpdateDTO;
 import tavin.azship.gestaofretes.domain.exception.ResourceEmptyException;
 import tavin.azship.gestaofretes.domain.exception.ResourceNotFoundException;
 import tavin.azship.gestaofretes.domain.model.Client;
@@ -13,10 +15,10 @@ import tavin.azship.gestaofretes.domain.repository.ClientRepository;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ClientService {
 
-    @Autowired
-    private ClientRepository clientRepository;
+    private final ClientRepository clientRepository;
 
     public List<Client> getAll(){
         return this.clientRepository.findAll();
@@ -33,15 +35,19 @@ public class ClientService {
 
     @Transactional
     public Client create (@Valid ClientDTO clientDTO)  {
-        validate(clientDTO);
-        Client client = new Client(clientDTO);
+        Client client = new Client();
+
+        ClientDTO.toEntity(client, clientDTO);
+
         return this.clientRepository.save(client);
     }
 
     @Transactional
-    public Client update(Long id,@Valid ClientDTO clientDTO)  {
-        seekOrFail(id);
-        Client client = new Client(id, clientDTO);
+    public Client update(Long id,@Valid ClientUpdateDTO clientDTO)  {
+        Client client = seekOrFail(id);
+
+        ClientUpdateDTO.toEntityUpdate(client, clientDTO);
+
         return this.clientRepository.save(client);
     }
 
@@ -49,39 +55,6 @@ public class ClientService {
     public void delete(Long id)  {
         seekOrFail(id);
         this.clientRepository.deleteById(id);
-    }
-
-    @Transactional
-    public void active(Long id){
-        Client client = seekOrFail(id);
-
-        client.active();
-    }
-
-    @Transactional
-    public void disable(Long id){
-        Client client = seekOrFail(id);
-
-        client.disable();
-    }
-
-    @Transactional
-    public void active(List<Long> ids){
-        ids.forEach(this::active);
-    }
-
-    @Transactional
-    public void disable(List<Long> ids){
-        ids.forEach(this::disable);
-    }
-
-    public void validate(ClientDTO dto){
-        if (dto.email().isEmpty()) {
-            throw new ResourceEmptyException (ResourceEmptyException.Type.EMAIL, "Client sem email");
-        }
-        if (dto.cnpj().isEmpty()){
-            throw new ResourceEmptyException (ResourceEmptyException.Type.CNPJ, "Client sem cnpj");
-        }
     }
 
 }

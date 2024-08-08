@@ -2,8 +2,8 @@ package tavin.azship.gestaofretes.domain.model;
 
 public enum UserRole {
 
-    ADMIN("admin"),
-    USER("user");
+    ADMIN("Admin"),
+    USER("User");
 
     private String role;
 

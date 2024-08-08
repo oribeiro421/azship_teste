@@ -1,17 +1,16 @@
 package tavin.azship.gestaofretes.api.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import tavin.azship.gestaofretes.domain.service.FreightAddressService;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/api/freight/{freightId}/address")
+@RequiredArgsConstructor
 public class FreightAddressController {
 
-    @Autowired
-    private FreightAddressService freightAddress;
+    private final FreightAddressService freightAddress;
 
     @PutMapping("/collect/{collectId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -1,16 +1,15 @@
 package tavin.azship.gestaofretes.api.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import tavin.azship.gestaofretes.domain.service.FlowFreightService;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/api/freight")
+@RequiredArgsConstructor
 public class FlowFreightController {
 
-    @Autowired
-    private FlowFreightService freightService;
+    private final FlowFreightService freightService;
 
 
     @PutMapping("/confirmed/{id}")

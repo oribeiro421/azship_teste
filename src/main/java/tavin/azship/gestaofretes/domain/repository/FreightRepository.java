@@ -8,6 +8,4 @@ import tavin.azship.gestaofretes.domain.model.Freight;
 @Repository
 public interface FreightRepository extends JpaRepository<Freight, Long>, JpaSpecificationExecutor<Freight> {
 
-
-
 }

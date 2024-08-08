@@ -27,19 +27,6 @@ public class AddressCollect {
     private Integer number;
     private Boolean active = Boolean.TRUE;
 
-    public AddressCollect(Long id, AddressCollectDTO dto){
-        this.id = id;
-        this.road = dto.road();
-        this.neighborhood = dto.neighborhood();
-        this.state = dto.state();
-        this.number = dto.number();
-    }
-    public AddressCollect(AddressCollectDTO dto){
-        this.road = dto.road();
-        this.neighborhood = dto.neighborhood();
-        this.state = dto.state();
-        this.number = dto.number();
-    }
 
     public void active(){
         setActive(true);

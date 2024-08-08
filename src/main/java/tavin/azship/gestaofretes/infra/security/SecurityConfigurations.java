@@ -18,10 +18,10 @@ public class SecurityConfigurations {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> {
-                            authorize.requestMatchers(HttpMethod.GET, "/api/freight").hasRole("ADMIN")
-                                    .anyRequest().authenticated();
-                })
+//                .authorizeHttpRequests(authorize -> {
+//                            authorize.requestMatchers(HttpMethod.GET, "/api/freight").hasRole("ADMIN")
+//                                    .anyRequest().authenticated();
+//                })
                 .build();
     }
 }

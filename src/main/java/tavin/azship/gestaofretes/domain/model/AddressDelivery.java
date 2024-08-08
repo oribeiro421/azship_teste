@@ -27,19 +27,6 @@ public class AddressDelivery {
     private Integer number;
     private Boolean active = Boolean.TRUE;
 
-    public AddressDelivery(Long id, AddressDeliveryDTO dto){
-        this.id = id;
-        this.road = dto.road();
-        this.neighborhood = dto.neighborhood();
-        this.state = dto.state();
-        this.number = dto.number();
-    }
-    public AddressDelivery(AddressDeliveryDTO dto){
-        this.road = dto.road();
-        this.neighborhood = dto.neighborhood();
-        this.state = dto.state();
-        this.number = dto.number();
-    }
 
     public void active(){
         setActive(true);

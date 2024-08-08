@@ -1,11 +1,13 @@
 package tavin.azship.gestaofretes.api.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tavin.azship.gestaofretes.api.dto.DriverDTO;
+import tavin.azship.gestaofretes.api.dto.update.DriverUpdateDTO;
 import tavin.azship.gestaofretes.domain.model.Driver;
 import tavin.azship.gestaofretes.domain.service.DriverService;
 
@@ -13,10 +15,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/driver")
+@RequiredArgsConstructor
 public class DriverController {
 
-    @Autowired
-    private DriverService driverService;
+    private final DriverService driverService;
 
     @GetMapping
     public ResponseEntity<List<Driver>> getAll(){
@@ -35,7 +37,7 @@ public class DriverController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Driver> update(@PathVariable Long id,@Valid @RequestBody DriverDTO dto){
+    public ResponseEntity<Driver> update(@PathVariable Long id,@Valid @RequestBody DriverUpdateDTO dto){
         Driver driver = driverService.update(id, dto);
         return new ResponseEntity<>(driver, HttpStatus.OK);
     }
