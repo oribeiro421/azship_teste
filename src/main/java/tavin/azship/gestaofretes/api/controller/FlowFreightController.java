@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import tavin.azship.gestaofretes.domain.service.FlowFreightService;
 
 @RestController
-@RequestMapping("/api/freight")
+@RequestMapping("/api/freight/flow")
 @RequiredArgsConstructor
 public class FlowFreightController {
 

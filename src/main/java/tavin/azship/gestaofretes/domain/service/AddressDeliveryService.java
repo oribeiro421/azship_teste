@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tavin.azship.gestaofretes.api.dto.AddressDeliveryDTO;
+import tavin.azship.gestaofretes.api.dto.response.AddressDeliveryResponseDTO;
 import tavin.azship.gestaofretes.api.dto.update.AddressDeliveryUpdateDTO;
 import tavin.azship.gestaofretes.domain.exception.ResourceNotFoundException;
 import tavin.azship.gestaofretes.domain.model.AddressDelivery;
@@ -19,12 +20,41 @@ public class AddressDeliveryService {
 
     private final AddressDeliveryRepository deliveryRepository;
 
-    public List<AddressDelivery> getAll(){
-        return deliveryRepository.findAll();
+    public List<AddressDeliveryResponseDTO> getAll(){
+        List<AddressDelivery> AddressDelivery = deliveryRepository.findAll();
+        return AddressDelivery.stream().map(AddressDeliveryResponseDTO::fromEntity).toList();
     }
 
-    public List<AddressDelivery> getInactive(){
-        return deliveryRepository.findByInactive();
+    public List<AddressDeliveryResponseDTO> getInactive(){
+        List<AddressDelivery> AddressDelivery = deliveryRepository.findByInactive();
+        return AddressDelivery.stream().map(AddressDeliveryResponseDTO::fromEntity).toList();
+    }
+
+    public AddressDeliveryResponseDTO getById(Long id){
+        AddressDelivery addressDelivery = seekOrFail(id);
+        return AddressDeliveryResponseDTO.fromEntity(addressDelivery);
+    }
+
+    @Transactional
+    public AddressDeliveryResponseDTO create(@Valid AddressDeliveryDTO dto){
+        AddressDelivery delivery = new AddressDelivery();
+
+        AddressDeliveryDTO.toEntity(delivery, dto);
+
+        deliveryRepository.save(delivery);
+
+        return AddressDeliveryResponseDTO.fromEntity(delivery);
+    }
+
+    @Transactional
+    public AddressDeliveryResponseDTO update(Long id,@Valid AddressDeliveryUpdateDTO dto){
+        AddressDelivery delivery = seekOrFail(id);
+
+        AddressDeliveryUpdateDTO.toEntityUpdate(delivery, dto);
+
+        deliveryRepository.save(delivery);
+
+        return AddressDeliveryResponseDTO.fromEntity(delivery);
     }
 
     public AddressDelivery seekOrFail(Long id){
@@ -43,24 +73,5 @@ public class AddressDeliveryService {
 
         return deliveries;
     }
-
-    @Transactional
-    public AddressDelivery create(@Valid AddressDeliveryDTO dto){
-        AddressDelivery delivery = new AddressDelivery();
-
-        AddressDeliveryDTO.toEntity(delivery, dto);
-
-        return deliveryRepository.save(delivery);
-    }
-
-    @Transactional
-    public AddressDelivery update(Long id,@Valid AddressDeliveryUpdateDTO dto){
-        AddressDelivery delivery = seekOrFail(id);
-
-        AddressDeliveryUpdateDTO.toEntityUpdate(delivery, dto);
-
-        return deliveryRepository.save(delivery);
-    }
-
 
 }

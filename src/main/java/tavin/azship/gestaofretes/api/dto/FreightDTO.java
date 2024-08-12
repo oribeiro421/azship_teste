@@ -38,6 +38,7 @@ public record FreightDTO (
                 freight.setDriver(driverService.seekOrFail(dto.driverId()));
                 freight.setAddressCollect(collectService.seekOrFails(dto.addressCollectId()));
                 freight.setAddressDelivery(deliveryService.seekOrFails(dto.addressDeliveryId()));
+                freight.setProperties(dto.properties());
         }
 
 }

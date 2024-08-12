@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tavin.azship.gestaofretes.api.dto.AddressCollectDTO;
+import tavin.azship.gestaofretes.api.dto.response.AddressCollectResponseDTO;
+import tavin.azship.gestaofretes.api.dto.response.AddressDeliveryResponseDTO;
 import tavin.azship.gestaofretes.api.dto.update.AddressCollectUpdateDTO;
 import tavin.azship.gestaofretes.domain.exception.ResourceNotFoundException;
 import tavin.azship.gestaofretes.domain.model.AddressCollect;
@@ -19,13 +21,43 @@ public class AddressCollectService {
 
     private final AddressCollectRepository collectRepository;
 
-    public List<AddressCollect> getAll(){
-        return collectRepository.findAll();
+    public List<AddressCollectResponseDTO> getAll(){
+        List<AddressCollect> addressCollects = collectRepository.findAll();
+        return addressCollects.stream().map(AddressCollectResponseDTO::fromEntity).toList();
     }
 
-    public List<AddressCollect> getInactive(){
-        return collectRepository.findByInactive();
+    public List<AddressCollectResponseDTO> getInactive(){
+        List<AddressCollect> addressCollects = collectRepository.findByInactive();
+        return addressCollects.stream().map(AddressCollectResponseDTO::fromEntity).toList();
     }
+
+    public AddressCollectResponseDTO getById(Long id){
+        AddressCollect addressCollect = seekOrFail(id);
+        return AddressCollectResponseDTO.fromEntity(addressCollect);
+    }
+
+    @Transactional
+    public AddressCollectResponseDTO create(@Valid AddressCollectDTO dto){
+        AddressCollect addressCollect = new AddressCollect();
+
+        AddressCollectDTO.toEntity(addressCollect, dto);
+
+        collectRepository.save(addressCollect);
+
+        return AddressCollectResponseDTO.fromEntity(addressCollect);
+    }
+
+    @Transactional
+    public AddressCollectResponseDTO update(Long id,@Valid AddressCollectUpdateDTO dto){
+        AddressCollect addressCollect = seekOrFail(id);
+
+        AddressCollectUpdateDTO.toEntityUpdate(addressCollect, dto);
+
+        collectRepository.save(addressCollect);
+
+        return AddressCollectResponseDTO.fromEntity(addressCollect);
+    }
+
 
     public AddressCollect seekOrFail(Long id){
         return collectRepository.findById(id).orElseThrow(()
@@ -43,23 +75,4 @@ public class AddressCollectService {
 
         return collects;
     }
-
-    @Transactional
-    public AddressCollect create(@Valid AddressCollectDTO dto){
-        AddressCollect addressCollect = new AddressCollect();
-
-        AddressCollectDTO.toEntity(addressCollect, dto);
-
-        return collectRepository.save(addressCollect);
-    }
-
-    @Transactional
-    public AddressCollect update(Long id,@Valid AddressCollectUpdateDTO dto){
-        AddressCollect addressCollect = seekOrFail(id);
-
-        AddressCollectUpdateDTO.toEntityUpdate(addressCollect, dto);
-
-        return collectRepository.save(addressCollect);
-    }
-
 }

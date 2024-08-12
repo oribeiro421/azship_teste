@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tavin.azship.gestaofretes.api.dto.DriverDTO;
+import tavin.azship.gestaofretes.api.dto.response.DriverResponseDTO;
 import tavin.azship.gestaofretes.api.dto.update.DriverUpdateDTO;
 import tavin.azship.gestaofretes.domain.exception.ResourceNotFoundException;
 import tavin.azship.gestaofretes.domain.model.Driver;
@@ -17,29 +18,34 @@ public class DriverService {
 
     private final DriverRepository driverRepository;
 
-    public List<Driver> getAll(){
-        return driverRepository.findAll();
+    public List<DriverResponseDTO> getAll(){
+        List<Driver> drivers = this.driverRepository.findAll();
+        return drivers.stream().map(DriverResponseDTO::fromEntity).toList();
     }
 
-    public Driver seekOrFail(Long id){
-        return driverRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(ResourceNotFoundException.Type.ID, "Id não encontrado"));
+    public DriverResponseDTO getById(Long id){
+        Driver driver = seekOrFail(id);
+        return DriverResponseDTO.fromEntity(driver);
     }
 
-    public Driver create(@Valid DriverDTO dto){
+    public DriverResponseDTO create(@Valid DriverDTO dto){
         Driver driver = new Driver();
 
         DriverDTO.toEntity(driver, dto);
 
-        return driverRepository.save(driver);
+        driverRepository.save(driver);
+
+        return DriverResponseDTO.fromEntity(driver);
     }
 
-    public Driver update(Long id, @Valid DriverUpdateDTO dto){
+    public DriverResponseDTO update(Long id, @Valid DriverUpdateDTO dto){
         Driver driver = seekOrFail(id);
 
         DriverUpdateDTO.toEntityUpdate(driver, dto);
 
-        return driverRepository.save(driver);
+        driverRepository.save(driver);
+
+        return DriverResponseDTO.fromEntity(driver);
     }
 
     public void delete(Long id){
@@ -47,4 +53,8 @@ public class DriverService {
         driverRepository.deleteById(id);
     }
 
+    public Driver seekOrFail(Long id){
+        return driverRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(ResourceNotFoundException.Type.ID, "Id não encontrado"));
+    }
 }
